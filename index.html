@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareWatch AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER: styled like a monitor bezel strip ===== -->
+  <header class="bezel">
+    <div class="bezel-brand">CAREWATCH <span class="accent">// AI</span></div>
+    <div class="bezel-status"><span class="status-dot"></span>MONITORING LIVE</div>
+  </header>
+
+  <main class="landing">
+    <section class="hero">
+      <p class="eyebrow">POST-SURGICAL RECOVERY MONITORING</p>
+      <h1>Recovery doesn't wait<br>for the next appointment.</h1>
+      <p class="subtitle">
+        CareWatch traces each patient's actual recovery against
+        their expected curve, day by day &mdash; and flags the
+        moment they start to diverge.
+      </p>
+
+      <!-- Decorative mini waveform: sets the "vitals monitor" tone before any data loads -->
+      <svg class="hero-trace" viewBox="0 0 600 90" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <pattern id="heroGrid" width="20" height="18" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 18" fill="none" stroke="#1f2731" stroke-width="1"/>
+          </pattern>
+        </defs>
+        <rect width="600" height="90" fill="url(#heroGrid)" />
+        <polyline class="trace-line trace-expected" points="0,60 80,45 160,50 240,30 320,35 400,18 480,22 560,10 600,12" />
+        <polyline class="trace-line trace-actual" points="0,62 80,55 160,58 240,50 320,52 400,60 480,66 560,70 600,74" />
+      </svg>
+
+      <div class="problem-panel">
+        <p class="panel-label">THE GAP</p>
+        <p>
+          Patients leave with a generic recovery timeline. Real recovery
+          rarely follows it exactly &mdash; pain, mobility and swelling
+          drift off course quietly, and it's usually caught late, at the
+          next scheduled visit.
+        </p>
+      </div>
+
+      <a href="dashboard.html" class="btn-monitor">
+        <span class="btn-dot"></span> Monitor Patient
+      </a>
+    </section>
+  </main>
+
+  <footer class="bezel-footer">CareWatch AI &mdash; Hackathon Prototype</footer>
+
+</body>
+</html>

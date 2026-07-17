@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareWatch AI &mdash; Patient Chart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="bezel">
+    <div class="bezel-brand">CAREWATCH <span class="accent">// AI</span></div>
+    <a href="index.html" class="bezel-back">&larr; EXIT CHART</a>
+  </header>
+
+  <main class="dashboard">
+
+    <!-- ===== PATIENT STRIP: like the header of a hospital chart ===== -->
+    <section class="chart-strip">
+      <div class="strip-field">
+        <span class="strip-label">PATIENT</span>
+        <span class="strip-value" id="patientName">&mdash;</span>
+      </div>
+      <div class="strip-field">
+        <span class="strip-label">PROCEDURE</span>
+        <span class="strip-value" id="surgeryType">&mdash;</span>
+      </div>
+      <div class="strip-field">
+        <span class="strip-label">RECOVERY SCORE</span>
+        <span class="strip-value strip-score" id="recoveryScore">&mdash;</span>
+      </div>
+    </section>
+
+    <!-- ===== RECOVERY TRACE: the signature chart, drawn by JS ===== -->
+    <section class="card trace-card">
+      <div class="card-heading">
+        <h3>Recovery Trace</h3>
+        <div class="legend">
+          <span><i class="swatch swatch-expected"></i>Expected</span>
+          <span><i class="swatch swatch-actual"></i>Actual</span>
+        </div>
+      </div>
+      <svg id="traceChart" viewBox="0 0 640 220" preserveAspectRatio="none"></svg>
+      <div class="axis-labels">
+        <span>Week 1</span><span>Week 2</span><span>Week 3</span>
+        <span>Week 4</span><span>Week 5</span><span>Week 6</span>
+      </div>
+    </section>
+
+    <!-- ===== READOUTS: expected vs actual, styled as monitor readouts ===== -->
+    <section class="card readouts-card">
+      <div class="card-heading"><h3>Symptom Readouts</h3></div>
+      <div class="readouts-grid">
+        <div class="readout-col">
+          <p class="readout-label">Expected</p>
+          <ul id="expectedList"></ul>
+        </div>
+        <div class="readout-col">
+          <p class="readout-label">Actual</p>
+          <ul id="actualList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TIMELINE ===== -->
+    <section class="card timeline-card">
+      <div class="card-heading"><h3>Discharge Timeline</h3></div>
+      <div class="timeline-row">
+        <span class="strip-label">EXPECTED</span>
+        <span id="expectedTimeline">&mdash;</span>
+      </div>
+      <div class="timeline-row">
+        <span class="strip-label">PROJECTED (ACTUAL)</span>
+        <span id="actualTimeline">&mdash;</span>
+      </div>
+    </section>
+
+    <!-- ===== ALARM: hidden unless a deviation is detected ===== -->
+    <section class="alarm" id="deviationAlert">
+      <span class="alarm-dot"></span>
+      <div class="alarm-text">
+        <p class="alarm-title">RECOVERY DEVIATION DETECTED</p>
+        <p class="alarm-sub">Risk Score <span id="riskScore">&mdash;</span>% &mdash; recommend early follow-up</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Load order matters: data → prediction logic → UI rendering -->
+  <script src="js/patientData.js"></script>
+  <script src="js/prediction.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

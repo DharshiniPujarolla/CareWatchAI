@@ -1,0 +1,356 @@
+/* =========================================================
+   DESIGN TOKENS
+   Vitals-monitor palette: charcoal-navy bezel, phosphor teal
+   for "on track," amber for caution, clinical (muted) red for
+   deviation. Everything is keyed to a monitor/ECG metaphor,
+   not a generic dark-dashboard look.
+========================================================= */
+:root {
+  --bg: #12161c;
+  --panel: #171e26;
+  --panel-raised: #1c242e;
+  --grid-line: rgba(255,255,255,0.045);
+  --border: #26303b;
+  --ink: #e7ecec;
+  --ink-muted: #8a97a0;
+  --teal: #4fb8a6;
+  --teal-dim: rgba(79,184,166,0.15);
+  --amber: #e0a458;
+  --red: #d9534f;
+  --red-dim: rgba(217,83,79,0.12);
+
+  --mono: 'IBM Plex Mono', 'Consolas', monospace;
+  --sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background:
+    repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 24px),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* =========================================================
+   BEZEL HEADER — reads like the top strip of a monitor unit
+========================================================= */
+.bezel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+}
+
+.bezel-brand { font-weight: 600; font-size: 15px; }
+.bezel-brand .accent { color: var(--teal); }
+
+.bezel-status, .bezel-back {
+  color: var(--ink-muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bezel-back:hover { color: var(--ink); }
+
+.status-dot, .alarm-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.bezel-footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--ink-muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+/* =========================================================
+   LANDING PAGE
+========================================================= */
+.landing { max-width: 680px; margin: 0 auto; padding: 70px 24px 40px; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--teal);
+  margin-bottom: 18px;
+}
+
+.hero h1 {
+  font-family: var(--mono);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  color: var(--ink-muted);
+  font-size: 16px;
+  max-width: 540px;
+  margin-bottom: 36px;
+}
+
+.hero-trace {
+  width: 100%;
+  height: 90px;
+  display: block;
+  margin-bottom: 36px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.trace-line {
+  fill: none;
+  stroke-width: 2;
+}
+.trace-expected { stroke: var(--teal); stroke-dasharray: 5 4; opacity: 0.9; }
+.trace-actual { stroke: var(--amber); opacity: 0.9; }
+
+.problem-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 36px;
+}
+
+.panel-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+
+.problem-panel p:not(.panel-label) { color: var(--ink-muted); font-size: 14.5px; }
+
+.btn-monitor {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--teal);
+  color: #0d1512;
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  padding: 14px 26px;
+  border-radius: 4px;
+  transition: filter 0.15s ease;
+}
+
+.btn-monitor:hover { filter: brightness(1.12); }
+
+.btn-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #0d1512;
+}
+
+/* =========================================================
+   DASHBOARD LAYOUT
+========================================================= */
+.dashboard {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Patient chart strip */
+.chart-strip {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.strip-field {
+  flex: 1;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+}
+.strip-field:last-child { border-right: none; }
+
+.strip-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  margin-bottom: 6px;
+}
+
+.strip-value {
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.strip-score { color: var(--teal); }
+
+/* Generic cards */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 22px 24px;
+}
+
+.card-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-heading h3 {
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Trace chart */
+.legend {
+  display: flex;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+.legend span { display: flex; align-items: center; gap: 6px; }
+.swatch { width: 10px; height: 10px; display: inline-block; border-radius: 2px; }
+.swatch-expected { background: var(--teal); }
+.swatch-actual { background: var(--amber); }
+
+#traceChart {
+  width: 100%;
+  height: 200px;
+  display: block;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.axis-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+  margin-top: 8px;
+  padding: 0 4px;
+}
+
+/* Symptom readouts */
+.readouts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.readout-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-bottom: 10px;
+}
+
+.readout-col ul { list-style: none; }
+.readout-col li {
+  font-family: var(--mono);
+  font-size: 14.5px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.readout-col li:last-child { border-bottom: none; }
+
+/* Timeline */
+.timeline-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+  font-family: var(--mono);
+  font-size: 14px;
+}
+.timeline-row:last-child { border-bottom: none; }
+
+/* =========================================================
+   ALARM — replaces the old boxed "alert" with a strip that
+   reads like a monitor's alarm banner. Hidden by default.
+========================================================= */
+.alarm {
+  display: none;
+  align-items: center;
+  gap: 16px;
+  background: var(--red-dim);
+  border: 1px solid var(--red);
+  border-radius: 6px;
+  padding: 18px 22px;
+}
+
+.alarm.active { display: flex; }
+
+.alarm-dot { background: var(--red); box-shadow: 0 0 8px var(--red); flex-shrink: 0; }
+
+.alarm-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--red);
+  margin-bottom: 4px;
+}
+
+.alarm-sub { color: var(--ink-muted); font-size: 13.5px; }
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 560px) {
+  .chart-strip { flex-direction: column; }
+  .strip-field { border-right: none; border-bottom: 1px solid var(--border); }
+  .strip-field:last-child { border-bottom: none; }
+  .readouts-grid { grid-template-columns: 1fr; gap: 14px; }
+  .hero h1 { font-size: 27px; }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .status-dot, .alarm-dot { animation: none; }
+}
