@@ -21,6 +21,10 @@
     <!-- ===== PATIENT STRIP: like the header of a hospital chart ===== -->
     <section class="chart-strip">
       <div class="strip-field">
+        <span class="strip-label">VIEWING</span>
+        <select class="strip-value strip-select" id="patientSelect"></select>
+      </div>
+      <div class="strip-field">
         <span class="strip-label">PATIENT</span>
         <span class="strip-value" id="patientName">&mdash;</span>
       </div>
@@ -78,12 +82,12 @@
       </div>
     </section>
 
-    <!-- ===== ALARM: hidden unless a deviation is detected ===== -->
+   <!-- ===== ALARM: hidden when on-track, amber for "watch", red for "deviation" ===== -->
     <section class="alarm" id="deviationAlert">
       <span class="alarm-dot"></span>
       <div class="alarm-text">
-        <p class="alarm-title">RECOVERY DEVIATION DETECTED</p>
-        <p class="alarm-sub">Risk Score <span id="riskScore">&mdash;</span>% &mdash; recommend early follow-up</p>
+        <p class="alarm-title" id="alarmTitle">&mdash;</p>
+        <p class="alarm-sub" id="alarmSub">&mdash;</p>
       </div>
     </section>
 

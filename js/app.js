@@ -36,14 +36,18 @@ function drawTraceChart(patient) {
   const markerX = worstIdx * stepX;
   const markerY = innerH - (patient.weeklyActual[worstIdx] / maxVal) * innerH;
 
+  const markerColor = patient.deviationStatus === "deviation" ? "#d9534f"
+    : patient.deviationStatus === "watch" ? "#e0a458"
+    : null;
+
   svg.innerHTML = `
     <g transform="translate(${PAD},${PAD})">
       ${[0,0.25,0.5,0.75,1].map(f => `<line x1="0" y1="${innerH*f}" x2="${innerW}" y2="${innerH*f}" stroke="#26303b" stroke-width="1" />`).join("")}
       <polyline points="${expectedPts}" fill="none" stroke="#4fb8a6" stroke-width="2.5" stroke-dasharray="6 5" />
       <polyline points="${actualPts}" fill="none" stroke="#e0a458" stroke-width="2.5" />
-      ${patient.deviationDetected ? `
-        <circle cx="${markerX}" cy="${markerY}" r="5" fill="#d9534f" />
-        <circle cx="${markerX}" cy="${markerY}" r="9" fill="none" stroke="#d9534f" stroke-width="1.5" opacity="0.6" />
+      ${markerColor ? `
+        <circle cx="${markerX}" cy="${markerY}" r="5" fill="${markerColor}" />
+        <circle cx="${markerX}" cy="${markerY}" r="9" fill="none" stroke="${markerColor}" stroke-width="1.5" opacity="0.6" />
       ` : ""}
     </g>
   `;
@@ -74,15 +78,41 @@ function renderDashboard(patient) {
   document.getElementById("expectedTimeline").innerText = patient.expectedTimeline;
   document.getElementById("actualTimeline").innerText = patient.actualTimeline;
 
+  document.getElementById("alarmTitle").innerText = patient.alarmTitle;
+  document.getElementById("alarmSub").innerText = patient.alarmSub;
   const alarm = document.getElementById("deviationAlert");
-  if (patient.deviationDetected) {
-    document.getElementById("riskScore").innerText = patient.riskScore;
-    alarm.classList.add("active");
-  } else {
-    alarm.classList.remove("active");
-  }
+  alarm.classList.remove("level-watch", "level-deviation");
+  if (patient.deviationStatus === "watch") alarm.classList.add("level-watch");
+  if (patient.deviationStatus === "deviation") alarm.classList.add("level-deviation");
 
   drawTraceChart(patient);
+}
+
+/**
+ * populatePatientSelector()
+ * Fills the "VIEWING" dropdown using getPatientList() (from
+ * prediction.js) and wires it so picking a patient re-renders
+ * the whole dashboard for that patient — no code edit needed
+ * to demo a different case.
+ */
+
+
+function populatePatientSelector() {
+  const select = document.getElementById("patientSelect");
+  const list = getPatientList();
+
+  select.innerHTML = "";
+  list.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.index;
+    option.textContent = `${p.name} — ${p.surgeryType}`;
+    select.appendChild(option);
+  });
+
+  select.addEventListener("change", () => {
+    const patient = getPatientResult(Number(select.value));
+    renderDashboard(patient);
+  });
 }
 
 /* =========================================================
@@ -93,7 +123,9 @@ function renderDashboard(patient) {
    provide). app.js never reads raw patient data itself —
    it only ever calls this one function.
 ========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
-  const patient = getPatientResult();
+  populatePatientSelector();
+  const patient = getPatientResult(0);
   renderDashboard(patient);
 });

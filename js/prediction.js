@@ -24,11 +24,20 @@ function calculateRiskScore(weeklyExpected, weeklyActual) {
 }
 
 /**
- * detectDeviation(riskScore)
- * Threshold logic — tweak the cutoff as you like.
+ * getDeviationStatus(riskScore)
+ * 3-tier status instead of a single on/off cutoff:
+ *   "on-track"  — riskScore < 25
+ *   "watch"     — 25 <= riskScore < 40 (behind schedule, but
+ *                 not severe enough to call a full deviation —
+ *                 worth monitoring, not yet alarming)
+ *   "deviation" — riskScore >= 40 (clear deviation, alert)
+ *
+ * Tweak the cutoffs here if you want the bands to shift.
  */
-function detectDeviation(riskScore) {
-  return riskScore >= 40;
+function getDeviationStatus(riskScore) {
+  if (riskScore >= 40) return "deviation";
+  if (riskScore >= 25) return "watch";
+  return "on-track";
 }
 
 /**
@@ -39,8 +48,22 @@ function symptomToArrow(label, direction) {
   return `${label} ${direction === "up" ? "↑" : "↓"}`;
 }
 
+/*
+ * getPatientList()
+ * Small helper so the UI can build a patient picker without
+ * ever touching the raw `patients` array directly. Returns
+ * just enough to label each option in a dropdown.
+ */
+function getPatientList() {
+  return patients.map((p, index) => ({
+    index,
+    name: p.name,
+    surgeryType: p.surgeryType
+  }));
+}
+ 
 /**
- * getPatientResult()
+ * getPatientResult(patientIndex)
  * THE CONTRACT. Must always return an object with exactly
  * these keys — app.js depends on this shape:
  *
@@ -49,14 +72,38 @@ function symptomToArrow(label, direction) {
  *   weeklyExpected: [6 numbers], weeklyActual: [6 numbers],
  *   expected: [3 strings], actual: [3 strings],
  *   expectedTimeline, actualTimeline,
- *   deviationDetected: boolean, riskScore: number
+ *   deviationDetected: boolean, riskScore: number,
+ *   deviationStatus: "on-track" | "watch" | "deviation",
+ *   alarmTitle: string, alarmSub: string
  * }
+ *
+ * deviationStatus/alarmTitle/alarmSub are NEW additive keys —
+ * deviationDetected is kept exactly as before (true only for
+ * the "deviation" tier) so nothing that already reads it breaks.
+ *
+ * patientIndex is optional — omitting it (or calling with no
+ * args, like the original version did) still works and falls
+ * back to the original demo patient, so nothing that already
+ * calls getPatientResult() with no arguments breaks.
  */
-function getPatientResult() {
-  const p = demoPatientRaw;
+function getPatientResult(patientIndex) {
+  const p = typeof patientIndex === "number" ? patients[patientIndex] : demoPatientRaw;
   const riskScore = calculateRiskScore(p.weeklyExpected, p.weeklyActual);
-  const deviationDetected = detectDeviation(riskScore);
+  const deviationStatus = getDeviationStatus(riskScore);
+  const deviationDetected = deviationStatus === "deviation";
   const latestActual = p.weeklyActual[p.weeklyActual.length - 1];
+
+  const alarmCopy = {
+    "on-track": { title: "", sub: "" }, // banner is hidden for this tier, text unused
+    watch: {
+      title: "RECOVERY DELAY — WORTH WATCHING",
+      sub: `Risk Score ${riskScore}% — behind schedule, recommend monitoring`
+    },
+    deviation: {
+      title: "RECOVERY DEVIATION DETECTED",
+      sub: `Risk Score ${riskScore}% — recommend early follow-up`
+    }
+  }[deviationStatus];
 
   return {
     name: p.name,
@@ -79,6 +126,9 @@ function getPatientResult() {
       ? `${p.expectedTimelineWeeks + 3}+ weeks (projected)`
       : `${p.expectedTimelineWeeks} weeks (on track)`,
     deviationDetected,
+    deviationStatus,
+    alarmTitle: alarmCopy.title,
+    alarmSub: alarmCopy.sub,
     riskScore
   };
 }
